@@ -6,3 +6,4 @@ Werkzeug
 # Needed for this specific app
 Flask
 pandas
+json

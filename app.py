@@ -14,7 +14,7 @@ def home():
 def geojson():
 
     print('opening geojson')
-    with open("static/data/local_sections_county.geojson") as geojson_data:
+    with open("/static/data/local_sections_county.geojson") as geojson_data:
         print('convertng geojson')
         geojson_json = json.load(geojson_data)
     

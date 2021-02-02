@@ -33,66 +33,94 @@ var map = L.map('map', {
     zoom: 4
 });
 
-console.log('Loading geojson (this may take ~20 seconds)...')
-
-d3.json('/geojson').then(data => {
-
-    baseMap = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-        attribution: 'American Chemical Society | Chemistry for Life',
-        tileSize: 512,
-        maxZoom: 18,
-        zoomOffset: -1,
-        id: 'mapbox/light-v10',
-        accessToken: API_KEY
-        });
-        
-    baseMap.addTo(map);
-
-    geodata = data['features'];
-        
-    zip_code_layer = L.geoJson(geodata, {
-    style: function(feature) {
-        return {
-        color: 'white',
-        fillColor: colorRegion(feature.properties.region),
-        fillOpacity: 0.5,
-        weight: 1.5
-        };
-    },
-    onEachFeature: function(feature, layer) {
-    
-        layer.on({
-        
-            mouseover: function(event) {
-                layer = event.target;
-                layer.setStyle({
-                fillOpacity: 0.9
-                });
-            },
-        
-            mouseout: function(event) {
-                layer = event.target;
-                layer.setStyle({
-                fillOpacity: 0.5
-                });
-            },
-            
-            /*
-            click: function(event) {
-            map.fitBounds(event.target.getBounds());
-            }
-            */
-        });
-        
-        layer.bindPopup(`${feature.properties.region} Region<hr/>County: ${feature.properties.county_name}<br/>State: ${feature.properties.state_name}`);
-
-    }
-
+baseMap = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+    attribution: 'American Chemical Society | Chemistry for Life',
+    tileSize: 512,
+    maxZoom: 18,
+    zoomOffset: -1,
+    id: 'mapbox/light-v10',
+    accessToken: API_KEY
     });
 
-    zip_code_layer.addTo(map);
+baseMap.addTo(map);
 
-    mapReady = true;
+console.log('Loading geojson (this may take ~20 seconds)...')
 
-    console.log('Done loading geojson')
+// d3.json('/geojson').then(data => {
+       
+
+
+//     geodata = data['features'];
+        
+//     zip_code_layer = L.geoJson(geodata, {
+//     style: function(feature) {
+//         return {
+//         color: 'white',
+//         fillColor: colorRegion(feature.properties.region),
+//         fillOpacity: 0.5,
+//         weight: 1.5
+//         };
+//     },
+//     onEachFeature: function(feature, layer) {
+    
+//         layer.on({
+        
+//             mouseover: function(event) {
+//                 layer = event.target;
+//                 layer.setStyle({
+//                 fillOpacity: 0.9
+//                 });
+//             },
+        
+//             mouseout: function(event) {
+//                 layer = event.target;
+//                 layer.setStyle({
+//                 fillOpacity: 0.5
+//                 });
+//             },
+            
+//             /*
+//             click: function(event) {
+//             map.fitBounds(event.target.getBounds());
+//             }
+//             */
+//         });
+        
+//         layer.bindPopup(`${feature.properties.region} Region<hr/>County: ${feature.properties.county_name}<br/>State: ${feature.properties.state_name}`);
+
+//     }
+
+//     });
+
+//     zip_code_layer.addTo(map);
+
+//     mapReady = true;
+
+//     console.log('Done loading geojson')
+// });
+
+/***********
+ * ADDING EVENT MARKERS
+ */
+
+mapReady = true;
+
+d3.json('/events_data').then(data => {
+
+    //console.log(data);
+    
+    //data = data.slice(0,1);
+
+    data.forEach(d => {
+        
+        console.log(d['lat'], d['lng']);
+        try {
+            marker = L.marker(d['lat'], d['lng']);
+            marker.addTo(map);
+        }
+        catch {
+            console.log(d['lat'], d['lng']);
+        }
+
+   });
 });

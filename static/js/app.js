@@ -46,81 +46,88 @@ baseMap.addTo(map);
 
 console.log('Loading geojson (this may take ~20 seconds)...')
 
-// d3.json('/geojson').then(data => {
+d3.json('/geojson').then(data => {
        
 
 
-//     geodata = data['features'];
+    geodata = data['features'];
         
-//     zip_code_layer = L.geoJson(geodata, {
-//     style: function(feature) {
-//         return {
-//         color: 'white',
-//         fillColor: colorRegion(feature.properties.region),
-//         fillOpacity: 0.5,
-//         weight: 1.5
-//         };
-//     },
-//     onEachFeature: function(feature, layer) {
+    zip_code_layer = L.geoJson(geodata, {
+    style: function(feature) {
+        return {
+        color: 'white',
+        fillColor: colorRegion(feature.properties.region),
+        fillOpacity: 0.5,
+        weight: 1.5
+        };
+    },
+    onEachFeature: function(feature, layer) {
     
-//         layer.on({
+        layer.on({
         
-//             mouseover: function(event) {
-//                 layer = event.target;
-//                 layer.setStyle({
-//                 fillOpacity: 0.9
-//                 });
-//             },
+            mouseover: function(event) {
+                layer = event.target;
+                layer.setStyle({
+                fillOpacity: 0.9
+                });
+            },
         
-//             mouseout: function(event) {
-//                 layer = event.target;
-//                 layer.setStyle({
-//                 fillOpacity: 0.5
-//                 });
-//             },
+            mouseout: function(event) {
+                layer = event.target;
+                layer.setStyle({
+                fillOpacity: 0.5
+                });
+            },
             
-//             /*
-//             click: function(event) {
-//             map.fitBounds(event.target.getBounds());
-//             }
-//             */
-//         });
+            /*
+            click: function(event) {
+            map.fitBounds(event.target.getBounds());
+            }
+            */
+        });
         
-//         layer.bindPopup(`${feature.properties.region} Region<hr/>County: ${feature.properties.county_name}<br/>State: ${feature.properties.state_name}`);
+        layer.bindPopup(`${feature.properties.region} Region<hr/>County: ${feature.properties.county_name}<br/>State: ${feature.properties.state_name}`);
 
-//     }
+    }
 
-//     });
+    });
 
-//     zip_code_layer.addTo(map);
+    zip_code_layer.addTo(map);
 
-//     mapReady = true;
+    mapReady = true;
 
-//     console.log('Done loading geojson')
-// });
+    console.log('Done loading geojson')
+});
 
 /***********
- * ADDING EVENT MARKERS
- */
+ * EVENT MARKERS
+ **********/
 
-mapReady = true;
+
+map.createPane("locationPane");
+map.getPane("locationPane").style.zIndex = 999;
 
 d3.json('/events_data').then(data => {
 
     //console.log(data);
-    
-    //data = data.slice(0,1);
+
 
     data.forEach(d => {
         
         console.log(d['lat'], d['lng']);
-        try {
-            marker = L.marker(d['lat'], d['lng']);
-            marker.addTo(map);
-        }
-        catch {
-            console.log(d['lat'], d['lng']);
-        }
+        marker = L.circleMarker([d['lat'], d['lng']], 
+        {
+            color: "gold",
+            fillColor: "blue",
+            fillOpacity: 0.75,
+            radius: 10,
+            pane: "locationPane"
+        });
+        marker.bringToFront();
+        marker.addTo(map);
+        marker.bindPopup(`<strong>${d['Event Name']}</strong><hr/>${d['Location']}<br/>${new Date(d['Event Start Date']).toDateString()}`)
 
-   });
+    });
 });
+
+
